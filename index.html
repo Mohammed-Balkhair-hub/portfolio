@@ -20,17 +20,17 @@
             --card-charcoal: #161616;
             --accent-blue: #3b82f6;
             --text-primary: #ffffff;
-            --text-secondary: #d1d5db;
-            --text-tertiary: #9ca3af;
+            --text-secondary: #f3f4f6;
+            --text-tertiary: #e5e7eb;
         }
         
         :root[data-theme="light"] {
             --bg-black: #ffffff;
-            --card-charcoal: #f3f4f6;
+            --card-charcoal: #f8f9fa;
             --accent-blue: #2563eb;
-            --text-primary: #111827;
-            --text-secondary: #374151;
-            --text-tertiary: #6b7280;
+            --text-primary: #0f172a;
+            --text-secondary: #1e293b;
+            --text-tertiary: #475569;
         }
         
         body {
@@ -59,13 +59,72 @@
             background-color: var(--card-charcoal);
         }
         
-        /* Theme-aware text colors */
+        /* Theme-aware text colors - make them very bright */
         .text-gray-300 {
-            color: var(--text-secondary);
+            color: var(--text-secondary) !important;
+            opacity: 1 !important;
+            text-shadow: none !important;
         }
         
         .text-gray-400 {
-            color: var(--text-tertiary);
+            color: var(--text-tertiary) !important;
+            opacity: 1 !important;
+            text-shadow: none !important;
+        }
+        
+        /* Ensure all text has good contrast and no shadows */
+        p, li, span, div, a {
+            color: inherit;
+            text-shadow: none !important;
+            opacity: 1 !important;
+        }
+        
+        /* Brighten main content text */
+        section p.text-gray-300,
+        section li.text-gray-300,
+        section span.text-gray-300 {
+            color: var(--text-secondary) !important;
+            opacity: 1 !important;
+            text-shadow: none !important;
+        }
+        
+        section p.text-gray-400,
+        section li.text-gray-400,
+        section span.text-gray-400 {
+            color: var(--text-tertiary) !important;
+            opacity: 1 !important;
+            text-shadow: none !important;
+        }
+        
+        /* Remove any text shadows that might dim text */
+        * {
+            text-shadow: none !important;
+        }
+        
+        /* Ensure headings are bright */
+        h1, h2, h3, h4, h5, h6 {
+            color: inherit;
+            text-shadow: none !important;
+            opacity: 1 !important;
+        }
+        
+        /* Make all text in cards bright */
+        .bg-\[#161616\] p,
+        .bg-\[#161616\] li,
+        .bg-\[#161616\] span,
+        .bg-\[#161616\] div {
+            color: var(--text-secondary) !important;
+            opacity: 1 !important;
+        }
+        
+        /* Navigation links */
+        nav a {
+            color: var(--text-secondary) !important;
+            opacity: 1 !important;
+        }
+        
+        nav a:hover {
+            color: var(--accent-blue) !important;
         }
         
         nav {
@@ -77,13 +136,21 @@
             background-color: var(--card-charcoal) !important;
         }
         
+        [data-theme="light"] .bg-\[#161616\] {
+            background-color: #ffffff !important;
+        }
+        
         .bg-\[#0f0f0f\] {
             background-color: var(--card-charcoal) !important;
         }
         
+        [data-theme="light"] .bg-\[#0f0f0f\] {
+            background-color: #f8f9fa !important;
+        }
+        
         .border-gray-800 {
             border-color: var(--text-tertiary) !important;
-            opacity: 0.3;
+            opacity: 0.5;
         }
         
         .bg-\[#0a0a0a\] {
@@ -142,6 +209,139 @@
         
         [data-theme="light"] .timeline-dot {
             box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+        }
+        
+        /* Light mode specific improvements */
+        [data-theme="light"] {
+            --border-color: #e2e8f0;
+        }
+        
+        [data-theme="light"] .border-gray-800 {
+            border-color: #e2e8f0 !important;
+            opacity: 1 !important;
+        }
+        
+        [data-theme="light"] nav {
+            border-color: #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="light"] .bg-\[#161616\],
+        [data-theme="light"] [class*="bg-\[#161616\]"] {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        [data-theme="light"] .bg-\[#0f0f0f\],
+        [data-theme="light"] [class*="bg-\[#0f0f0f\]"] {
+            background-color: #f8f9fa !important;
+            background: #f8f9fa !important;
+        }
+        
+        /* Force white backgrounds for experience cards, project cards, skill cards, and certification cards */
+        [data-theme="light"] .rounded-lg.bg-\[#161616\],
+        [data-theme="light"] div[class*="bg-\[#161616\]"],
+        [data-theme="light"] section[class*="bg-\[#0f0f0f\]"] {
+            background-color: #ffffff !important;
+            background: #ffffff !important;
+        }
+        
+        [data-theme="light"] section.bg-\[#0f0f0f\] {
+            background-color: #f8f9fa !important;
+            background: #f8f9fa !important;
+        }
+        
+        /* Override Tailwind's inline styles more aggressively */
+        [data-theme="light"] *[style*="background-color: rgb(22, 22, 22)"],
+        [data-theme="light"] *[style*="background-color:#161616"] {
+            background-color: #ffffff !important;
+        }
+        
+        [data-theme="light"] .border-gray-800 {
+            border-color: #cbd5e1 !important;
+            border-width: 1px !important;
+        }
+        
+        [data-theme="light"] .project-card {
+            border: 1px solid #e2e8f0 !important;
+            background-color: #ffffff !important;
+        }
+        
+        [data-theme="light"] .project-card:hover {
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+            border-color: var(--accent-blue) !important;
+            transform: translateY(-2px);
+        }
+        
+        [data-theme="light"] .skill-card {
+            border: 1px solid #e2e8f0 !important;
+            background-color: #ffffff !important;
+        }
+        
+        [data-theme="light"] .skill-card:hover {
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+            border-color: var(--accent-blue) !important;
+        }
+        
+        [data-theme="light"] .pdf-container {
+            border-color: #e2e8f0 !important;
+        }
+        
+        [data-theme="light"] .pdf-container:hover {
+            border-color: var(--accent-blue) !important;
+            box-shadow: 0 0 15px rgba(37, 99, 235, 0.2);
+        }
+        
+        [data-theme="light"] audio::-webkit-media-controls-panel {
+            background-color: #f8f9fa;
+        }
+        
+        [data-theme="light"] h1.bg-gradient-to-r {
+            background: linear-gradient(to right, #0f172a, #475569) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            color: transparent !important;
+        }
+        
+        [data-theme="light"] .text-gray-300,
+        [data-theme="light"] .text-gray-400 {
+            color: var(--text-secondary) !important;
+        }
+        
+        [data-theme="light"] footer {
+            border-color: #e2e8f0 !important;
+        }
+        
+        [data-theme="light"] .timeline-line {
+            background: linear-gradient(to bottom, var(--accent-blue), rgba(37, 99, 235, 0.3));
+        }
+        
+        [data-theme="light"] #theme-toggle:hover,
+        [data-theme="light"] #theme-toggle-mobile:hover {
+            background-color: #e2e8f0 !important;
+        }
+        
+        [data-theme="light"] .bg-\[#0a0a0a\] {
+            background-color: #f1f5f9 !important;
+        }
+        
+        /* Tech tags in light mode */
+        [data-theme="light"] span.bg-\[#0a0a0a\],
+        [data-theme="light"] [class*="bg-[#0a0a0a]"] {
+            background-color: #e2e8f0 !important;
+            background: #e2e8f0 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+        
+        /* Ensure good contrast in light mode */
+        [data-theme="light"] section {
+            color: var(--text-primary);
+        }
+        
+        [data-theme="light"] .text-\[#3b82f6\] {
+            color: #2563eb !important;
         }
         
         /* PDF display styling */
@@ -220,6 +420,23 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
         
+        @media (max-width: 768px) {
+            .pdf-modal-content {
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+                padding: 10px;
+            }
+            
+            .pdf-modal-close {
+                top: 10px;
+                right: 10px;
+                width: 35px;
+                height: 35px;
+                font-size: 20px;
+            }
+        }
+        
         .pdf-modal-close {
             position: absolute;
             top: 15px;
@@ -249,6 +466,13 @@
             height: calc(100% - 20px);
             border: none;
             border-radius: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .pdf-modal iframe {
+                height: calc(100% - 10px);
+                border-radius: 0;
+            }
         }
         
         [data-theme="light"] .pdf-modal {
@@ -283,7 +507,7 @@
 </head>
 <body>
     <!-- Sticky Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a] bg-opacity-95 backdrop-blur-sm border-b border-[#161616]">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-[#0a0a0a] backdrop-blur-sm border-b border-[#161616]" style="background-color: var(--bg-black) !important;">
         <div class="container-custom mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="text-xl font-semibold text-[#3b82f6]">
@@ -351,6 +575,9 @@
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
                     <a href="Assets/resume.pdf" download class="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors font-medium">
                         Download Resume
+                    </a>
+                    <a href="Assets/resume.pdf" target="_blank" rel="noopener noreferrer" class="px-6 py-3 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg hover:bg-[#3b82f6] hover:text-white transition-colors font-medium">
+                        View Resume
                     </a>
                     <a href="https://github.com/Mohammed-Balkhair-hub" target="_blank" rel="noopener noreferrer" class="px-6 py-3 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg hover:bg-[#3b82f6] hover:text-white transition-colors font-medium">
                         GitHub
@@ -592,7 +819,7 @@
     <div id="pdf-modal" class="pdf-modal" onclick="closePdfModal(event)">
         <div class="pdf-modal-content" onclick="event.stopPropagation()">
             <button class="pdf-modal-close" onclick="closePdfModal()" aria-label="Close">&times;</button>
-            <iframe id="pdf-modal-iframe" src="" type="application/pdf"></iframe>
+            <iframe id="pdf-modal-iframe" src="" type="application/pdf" allow="fullscreen" style="touch-action: manipulation;"></iframe>
         </div>
     </div>
 
@@ -622,7 +849,50 @@
             html.setAttribute('data-theme', newTheme);
             localStorage.setItem('theme', newTheme);
             updateThemeIcons(newTheme);
+            
+            // Force update card backgrounds
+            updateCardBackgrounds(newTheme);
         }
+        
+        function updateCardBackgrounds(theme) {
+            // Find all elements with dark background classes
+            const darkCards = document.querySelectorAll('.bg-\\[\\#161616\\], [class*="bg-[#161616]"]');
+            const darkSections = document.querySelectorAll('.bg-\\[\\#0f0f0f\\], [class*="bg-[#0f0f0f]"]');
+            const techTags = document.querySelectorAll('span.bg-\\[\\#0a0a0a\\], span[class*="bg-[#0a0a0a]"]');
+            
+            if (theme === 'light') {
+                darkCards.forEach(card => {
+                    card.style.backgroundColor = '#ffffff';
+                    card.style.background = '#ffffff';
+                });
+                darkSections.forEach(section => {
+                    section.style.backgroundColor = '#f8f9fa';
+                    section.style.background = '#f8f9fa';
+                });
+                techTags.forEach(tag => {
+                    tag.style.backgroundColor = '#e2e8f0';
+                    tag.style.background = '#e2e8f0';
+                    tag.style.border = '1px solid #cbd5e1';
+                });
+            } else {
+                darkCards.forEach(card => {
+                    card.style.backgroundColor = '';
+                    card.style.background = '';
+                });
+                darkSections.forEach(section => {
+                    section.style.backgroundColor = '';
+                    section.style.background = '';
+                });
+                techTags.forEach(tag => {
+                    tag.style.backgroundColor = '';
+                    tag.style.background = '';
+                    tag.style.border = '';
+                });
+            }
+        }
+        
+        // Update cards on initial load
+        updateCardBackgrounds(currentTheme);
         
         if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
         if (themeToggleMobile) themeToggleMobile.addEventListener('click', toggleTheme);
@@ -644,9 +914,28 @@
         function openPdfModal(pdfPath) {
             const modal = document.getElementById('pdf-modal');
             const iframe = document.getElementById('pdf-modal-iframe');
-            iframe.src = pdfPath;
+            
+            // Detect mobile device
+            const isMobile = window.innerWidth <= 768;
+            
+            // For mobile, try different zoom parameters to fit PDF to width
+            // Different browsers support different parameters
+            if (isMobile) {
+                // Try multiple zoom options - browsers will use what they support
+                // #view=FitH fits to horizontal width
+                // #zoom=fit fits to page
+                iframe.src = pdfPath + '#view=FitH';
+            } else {
+                iframe.src = pdfPath;
+            }
+            
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Add a note for mobile users about pinch-to-zoom
+            if (isMobile) {
+                console.log('Tip: Use pinch-to-zoom gestures to zoom in/out on the PDF');
+            }
         }
         
         function closePdfModal(event) {
