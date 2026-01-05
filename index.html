@@ -1206,7 +1206,8 @@
                     height: 80,
                     normalize: true,
                     mediaControls: false,
-                    interact: true
+                    interact: true,
+                    dragToSeek: true
                 });
                 
                 // Format time
@@ -1312,6 +1313,79 @@
                     if (playIcon) playIcon.style.display = 'block';
                     if (pauseIcon) pauseIcon.style.display = 'none';
                 });
+                
+                // Add explicit drag-to-seek functionality for Wavesurfer
+                const wavesurferContainer = document.getElementById('wavesurfer');
+                if (wavesurferContainer) {
+                    let isDragging = false;
+                    
+                    // Mouse events for desktop
+                    wavesurferContainer.addEventListener('mousedown', (e) => {
+                        isDragging = true;
+                        const rect = wavesurferContainer.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const percentage = Math.max(0, Math.min(1, x / rect.width));
+                        if (wavesurfer.getDuration()) {
+                            wavesurfer.seekTo(percentage);
+                        }
+                        wavesurferContainer.style.cursor = 'grabbing';
+                    });
+                    
+                    document.addEventListener('mousemove', (e) => {
+                        if (isDragging && wavesurferContainer) {
+                            const rect = wavesurferContainer.getBoundingClientRect();
+                            const x = e.clientX - rect.left;
+                            const percentage = Math.max(0, Math.min(1, x / rect.width));
+                            if (wavesurfer.getDuration()) {
+                                wavesurfer.seekTo(percentage);
+                            }
+                        }
+                    });
+                    
+                    document.addEventListener('mouseup', () => {
+                        if (isDragging) {
+                            isDragging = false;
+                            if (wavesurferContainer) {
+                                wavesurferContainer.style.cursor = 'pointer';
+                            }
+                        }
+                    });
+                    
+                    // Touch events for mobile
+                    wavesurferContainer.addEventListener('touchstart', (e) => {
+                        isDragging = true;
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const rect = wavesurferContainer.getBoundingClientRect();
+                        const x = touch.clientX - rect.left;
+                        const percentage = Math.max(0, Math.min(1, x / rect.width));
+                        if (wavesurfer.getDuration()) {
+                            wavesurfer.seekTo(percentage);
+                        }
+                    });
+                    
+                    document.addEventListener('touchmove', (e) => {
+                        if (isDragging && wavesurferContainer) {
+                            e.preventDefault();
+                            const touch = e.touches[0];
+                            const rect = wavesurferContainer.getBoundingClientRect();
+                            const x = touch.clientX - rect.left;
+                            const percentage = Math.max(0, Math.min(1, x / rect.width));
+                            if (wavesurfer.getDuration()) {
+                                wavesurfer.seekTo(percentage);
+                            }
+                        }
+                    });
+                    
+                    document.addEventListener('touchend', () => {
+                        if (isDragging) {
+                            isDragging = false;
+                        }
+                    });
+                    
+                    // Set cursor style
+                    wavesurferContainer.style.cursor = 'pointer';
+                }
             } catch (error) {
                 console.error('Error initializing Wavesurfer:', error);
                 // Fallback to HTML5 audio if Wavesurfer fails
