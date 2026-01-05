@@ -475,6 +475,25 @@
             }
         }
         
+        .pdf-fallback-link {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: var(--accent-blue);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            z-index: 1002;
+        }
+        
+        .pdf-fallback-link:hover {
+            background: #2563eb;
+        }
+        
         [data-theme="light"] .pdf-modal {
             background-color: rgba(255, 255, 255, 0.95);
         }
@@ -851,10 +870,11 @@
 
     <!-- PDF Modal -->
     <div id="pdf-modal" class="pdf-modal" onclick="closePdfModal(event)">
-        <div class="pdf-modal-content" onclick="event.stopPropagation()">
-            <button class="pdf-modal-close" onclick="closePdfModal()" aria-label="Close">&times;</button>
-            <iframe id="pdf-modal-iframe" src="" type="application/pdf" allow="fullscreen" style="touch-action: manipulation;"></iframe>
-        </div>
+            <div class="pdf-modal-content" onclick="event.stopPropagation()">
+                <button class="pdf-modal-close" onclick="closePdfModal()" aria-label="Close">&times;</button>
+                <iframe id="pdf-modal-iframe" src="" type="application/pdf" allow="fullscreen" style="touch-action: manipulation;"></iframe>
+                <a id="pdf-fallback-link" href="" target="_blank" rel="noopener noreferrer" class="pdf-fallback-link">Open PDF in New Tab</a>
+            </div>
     </div>
 
     <!-- Scripts -->
@@ -946,31 +966,28 @@
         
         // PDF Modal
         function openPdfModal(pdfPath) {
-            const modal = document.getElementById('pdf-modal');
-            const iframe = document.getElementById('pdf-modal-iframe');
-            
             // Detect mobile device
             const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
             
-            // For mobile, try multiple approaches to handle large A0 poster PDFs
+            // For mobile, open PDF directly in new tab for better viewing experience
+            // This works much better for large A0 posters on mobile devices
             if (isMobile) {
-                // Check if we're on a web server (not file://)
-                if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-                    // Use Google Docs viewer which handles large PDFs much better
-                    // It automatically fits to screen width and provides better zoom controls
-                    const baseUrl = window.location.origin;
-                    const fullPdfPath = pdfPath.startsWith('http') ? pdfPath : baseUrl + (pdfPath.startsWith('/') ? '' : '/') + pdfPath;
-                    const encodedUrl = encodeURIComponent(fullPdfPath);
-                    iframe.src = `https://docs.google.com/viewer?url=${encodedUrl}&embedded=true`;
-                } else {
-                    // Fallback for local file access - try different zoom parameters
-                    // #zoom=page-width tries to fit page width to viewport
-                    iframe.src = pdfPath + '#zoom=page-width';
-                }
-            } else {
-                // For desktop, use direct PDF with zoom parameter
-                iframe.src = pdfPath + '#zoom=page-fit';
+                // Open PDF in new tab with zoom parameter for better fit
+                window.open(pdfPath + '#zoom=page-width', '_blank');
+                return; // Don't show modal on mobile
             }
+            
+            // For desktop, use the modal
+            const modal = document.getElementById('pdf-modal');
+            const iframe = document.getElementById('pdf-modal-iframe');
+            const fallbackLink = document.getElementById('pdf-fallback-link');
+            
+            // Set fallback link
+            fallbackLink.href = pdfPath;
+            fallbackLink.style.display = 'none';
+            
+            // Use direct PDF with zoom parameter for desktop
+            iframe.src = pdfPath + '#zoom=page-fit';
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -982,8 +999,10 @@
             }
             const modal = document.getElementById('pdf-modal');
             const iframe = document.getElementById('pdf-modal-iframe');
+            const fallbackLink = document.getElementById('pdf-fallback-link');
             modal.classList.remove('active');
             iframe.src = '';
+            fallbackLink.style.display = 'none';
             document.body.style.overflow = '';
         }
         
