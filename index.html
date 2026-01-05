@@ -13,6 +13,17 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- Wavesurfer.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/wavesurfer.js@7/dist/wavesurfer.min.js"></script>
+    <script>
+        // Ensure Wavesurfer is loaded before initialization
+        window.addEventListener('load', function() {
+            if (typeof WaveSurfer === 'undefined') {
+                console.error('Wavesurfer failed to load');
+            }
+        });
+    </script>
+    
     <!-- Custom CSS -->
     <style>
         :root {
@@ -49,14 +60,59 @@
             scroll-behavior: smooth;
         }
         
-        /* Custom audio player styling */
+        /* Custom audio player styling - hidden, using custom waveform */
         audio {
-            width: 100%;
-            margin-top: 1rem;
+            display: none;
         }
         
-        audio::-webkit-media-controls-panel {
-            background-color: var(--card-charcoal);
+        /* Wavesurfer Audio Player Styling */
+        .wavesurfer-container {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 12px;
+            background: var(--card-charcoal);
+            border-radius: 8px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        
+        /* Wavesurfer waveform styling */
+        #wavesurfer {
+            width: 100% !important;
+            height: 80px !important;
+            min-height: 80px;
+            cursor: pointer;
+            display: block;
+        }
+        
+        /* Wavesurfer wave colors - using CSS variables for better compatibility */
+        #wavesurfer wave {
+            background: transparent !important;
+        }
+        
+        #wavesurfer wave wave {
+            background: rgba(59, 130, 246, 0.3) !important;
+        }
+        
+        #wavesurfer wave wave[data-name="wave-progress"] {
+            background: #3b82f6 !important;
+        }
+        
+        #wavesurfer wave wave[data-name="wave-cursor"] {
+            background: #3b82f6 !important;
+            width: 2px !important;
+        }
+        
+        /* Ensure waveform is visible */
+        #wavesurfer > wave {
+            display: block !important;
+            width: 100% !important;
+            height: 80px !important;
+        }
+        
+        /* Light mode adjustments */
+        [data-theme="light"] .wavesurfer-container {
+            background: #ffffff;
+            border-color: #e2e8f0;
         }
         
         /* Theme-aware text colors - make them very bright */
@@ -173,6 +229,38 @@
             transform: scale(1.02);
             border-color: var(--accent-blue);
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Experience accordion styling */
+        .experience-header {
+            user-select: none;
+        }
+        
+        .experience-header:hover {
+            background-color: rgba(59, 130, 246, 0.05);
+        }
+        
+        .experience-content {
+            max-height: 0;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .experience-content.expanded {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+        
+        .expand-icon {
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+        
+        .expand-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        [data-theme="light"] .experience-header:hover {
+            background-color: rgba(37, 99, 235, 0.05);
         }
         
         /* Timeline styling */
@@ -626,10 +714,7 @@
                     Focused on end-to-end ML, DL, and GenAI (LLMs, GANs, Diffusion). Expertise in building scalable AI agents and architectures like Transformers and GNNs.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="Assets/resume.pdf?v=2" download class="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors font-medium">
-                        Download Resume
-                    </a>
-                    <a href="Assets/resume.pdf?v=2" target="_blank" rel="noopener noreferrer" class="px-6 py-3 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg hover:bg-[#3b82f6] hover:text-white transition-colors font-medium">
+                    <a href="Assets/resume.pdf?v=2" target="_blank" rel="noopener noreferrer" class="px-6 py-3 bg-[#3b82f6] text-white rounded-lg hover:bg-[#2563eb] transition-colors font-medium">
                         View Resume
                     </a>
                     <a href="https://github.com/Mohammed-Balkhair-hub" target="_blank" rel="noopener noreferrer" class="px-6 py-3 border-2 border-[#3b82f6] text-[#3b82f6] rounded-lg hover:bg-[#3b82f6] hover:text-white transition-colors font-medium">
@@ -652,9 +737,9 @@
                     <!-- Experience 1 -->
                     <div class="relative pl-8 md:pl-16">
                         <div class="timeline-dot hidden md:block"></div>
-                        <div class="bg-[#161616] rounded-lg p-6 border border-gray-800 hover:border-[#3b82f6] transition-colors">
-                            <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-                                <div>
+                        <div class="bg-[#161616] rounded-lg border border-gray-800 hover:border-[#3b82f6] transition-colors experience-card">
+                            <div class="experience-header cursor-pointer p-6 flex items-center justify-between" data-expand="exp-1">
+                                <div class="flex-1">
                                     <h3 class="text-2xl font-semibold text-[#3b82f6] mb-2">
                                         AI Research Trainee
                                     </h3>
@@ -662,7 +747,12 @@
                                         University Health Network (Toronto)
                                     </p>
                                 </div>
+                                <svg class="w-6 h-6 text-[#3b82f6] transition-transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
                             </div>
+                            <div class="experience-content hidden overflow-hidden" id="exp-1">
+                                <div class="px-6 pb-6">
                             <ul class="space-y-2 text-gray-300">
                                 <li class="flex items-start">
                                     <span class="text-[#3b82f6] mr-2">▹</span>
@@ -673,15 +763,17 @@
                                     <span>Developed and benchmarked GNNs, GANs, and Diffusion models using PyTorch and protein language models (ESM).</span>
                                 </li>
                             </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
                     <!-- Experience 2 -->
                     <div class="relative pl-8 md:pl-16">
                         <div class="timeline-dot hidden md:block"></div>
-                        <div class="bg-[#161616] rounded-lg p-6 border border-gray-800 hover:border-[#3b82f6] transition-colors">
-                            <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-4">
-                                <div>
+                        <div class="bg-[#161616] rounded-lg border border-gray-800 hover:border-[#3b82f6] transition-colors experience-card">
+                            <div class="experience-header cursor-pointer p-6 flex items-center justify-between" data-expand="exp-2">
+                                <div class="flex-1">
                                     <h3 class="text-2xl font-semibold text-[#3b82f6] mb-2">
                                         Data Scientist Intern
                                     </h3>
@@ -689,7 +781,12 @@
                                         Saudi Aramco (Dhahran)
                                     </p>
                                 </div>
+                                <svg class="w-6 h-6 text-[#3b82f6] transition-transform expand-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
                             </div>
+                            <div class="experience-content hidden overflow-hidden" id="exp-2">
+                                <div class="px-6 pb-6">
                             <ul class="space-y-2 text-gray-300">
                                 <li class="flex items-start">
                                     <span class="text-[#3b82f6] mr-2">▹</span>
@@ -700,6 +797,8 @@
                                     <span>Engineered Python/Selenium scripts to automate bulk data extraction from USPTO.</span>
                                 </li>
                             </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -726,10 +825,20 @@
                         <span class="px-2 py-1 bg-[#0a0a0a] text-[#3b82f6] rounded text-xs font-mono">RAG</span>
                     </div>
                     <p class="text-gray-400 text-xs mb-2 italic">Sample output:</p>
-                    <audio controls>
-                        <source src="Assets/2025-11-01-azure-Andrew:DragonHDLatest-Emma:DragonHDLatest.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
-                    </audio>
+                    <div class="wavesurfer-container">
+                        <div id="wavesurfer" style="margin-bottom: 10px; min-height: 80px;"></div>
+                        <div class="flex items-center justify-center gap-3">
+                            <button id="wavesurfer-play" class="w-10 h-10 rounded-full bg-[#3b82f6] text-white flex items-center justify-center hover:bg-[#2563eb] transition-colors">
+                                <svg id="play-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                                <svg id="pause-icon" width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="display: none;">
+                                    <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                                </svg>
+                            </button>
+                            <span id="wavesurfer-time" class="text-gray-300 text-xs font-mono">0:00 / 0:00</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Project 2: AI-LAB -->
@@ -791,7 +900,7 @@
                 <!-- Specialization -->
                 <div class="skill-card bg-[#161616] rounded-lg p-6 border border-gray-800">
                     <h3 class="text-xl font-semibold text-[#3b82f6] mb-4">Specialization</h3>
-                    <div class="space-y-2">
+                    <div class="flex flex-wrap gap-2">
                         <div class="text-gray-300 font-mono text-sm">ML</div>
                         <div class="text-gray-300 font-mono text-sm">DL</div>
                         <div class="text-gray-300 font-mono text-sm">CV</div>
@@ -807,7 +916,7 @@
                 <!-- Frameworks -->
                 <div class="skill-card bg-[#161616] rounded-lg p-6 border border-gray-800">
                     <h3 class="text-xl font-semibold text-[#3b82f6] mb-4">Frameworks</h3>
-                    <div class="space-y-2">
+                    <div class="flex flex-wrap gap-2">
                         <div class="text-gray-300 font-mono text-sm">PyTorch</div>
                         <div class="text-gray-300 font-mono text-sm">TensorFlow</div>
                         <div class="text-gray-300 font-mono text-sm">Keras</div>
@@ -819,7 +928,7 @@
                 <!-- Languages & Data -->
                 <div class="skill-card bg-[#161616] rounded-lg p-6 border border-gray-800">
                     <h3 class="text-xl font-semibold text-[#3b82f6] mb-4">Languages & Data</h3>
-                    <div class="space-y-2">
+                    <div class="flex flex-wrap gap-2">
                         <div class="text-gray-300 font-mono text-sm">Python</div>
                         <div class="text-gray-300 font-mono text-sm">Java</div>
                         <div class="text-gray-300 font-mono text-sm">SQL</div>
@@ -832,7 +941,7 @@
                 <!-- Development -->
                 <div class="skill-card bg-[#161616] rounded-lg p-6 border border-gray-800">
                     <h3 class="text-xl font-semibold text-[#3b82f6] mb-4">Development</h3>
-                    <div class="space-y-2">
+                    <div class="flex flex-wrap gap-2">
                         <div class="text-gray-300 font-mono text-sm">FastAPI</div>
                         <div class="text-gray-300 font-mono text-sm">Flask</div>
                         <div class="text-gray-300 font-mono text-sm">LangGraph</div>
@@ -884,6 +993,27 @@
 
     <!-- Scripts -->
     <script>
+        // Experience accordion functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.experience-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const expandId = this.getAttribute('data-expand');
+                    const content = document.getElementById(expandId);
+                    const icon = this.querySelector('.expand-icon');
+                    
+                    if (content.classList.contains('expanded')) {
+                        content.classList.remove('expanded');
+                        content.classList.add('hidden');
+                        if (icon) icon.classList.remove('rotated');
+                    } else {
+                        content.classList.remove('hidden');
+                        content.classList.add('expanded');
+                        if (icon) icon.classList.add('rotated');
+                    }
+                });
+            });
+        });
+        
         // Theme Toggle
         const themeToggle = document.getElementById('theme-toggle');
         const themeToggleMobile = document.getElementById('theme-toggle-mobile');
@@ -1029,6 +1159,476 @@
                 closePdfModal();
             }
         });
+        
+        // Wavesurfer Audio Player
+        let wavesurfer;
+        let audioFallback = null; // HTML5 audio fallback for file:// protocol
+        
+        // Check if we're on file:// protocol (local file)
+        const isFileProtocol = window.location.protocol === 'file:';
+        
+        // Wait for DOM and Wavesurfer library to be ready
+        function initWavesurfer() {
+            const playBtn = document.getElementById('wavesurfer-play');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const timeDisplay = document.getElementById('wavesurfer-time');
+            
+            if (!playBtn || !timeDisplay) {
+                console.error('Wavesurfer elements not found');
+                return;
+            }
+            
+            // If file:// protocol, use HTML5 audio fallback instead
+            if (isFileProtocol) {
+                initHTML5AudioFallback();
+                return;
+            }
+            
+            // Check if WaveSurfer is loaded
+            if (typeof WaveSurfer === 'undefined') {
+                console.error('WaveSurfer library not loaded');
+                // Retry after a short delay
+                setTimeout(initWavesurfer, 100);
+                return;
+            }
+            
+            try {
+                // Initialize Wavesurfer
+                wavesurfer = WaveSurfer.create({
+                    container: '#wavesurfer',
+                    waveColor: 'rgba(59, 130, 246, 0.3)',
+                    progressColor: '#3b82f6',
+                    cursorColor: '#3b82f6',
+                    barWidth: 3,
+                    barRadius: 3,
+                    barGap: 2,
+                    height: 80,
+                    normalize: true,
+                    mediaControls: false,
+                    interact: true
+                });
+                
+                // Format time
+                function formatTime(seconds) {
+                    if (!seconds || isNaN(seconds)) return '0:00';
+                    const mins = Math.floor(seconds / 60);
+                    const secs = Math.floor(seconds % 60);
+                    return `${mins}:${secs.toString().padStart(2, '0')}`;
+                }
+                
+                // Update time display
+                function updateTime() {
+                    try {
+                        const current = wavesurfer.getCurrentTime() || 0;
+                        const duration = wavesurfer.getDuration() || 0;
+                        timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+                    } catch (e) {
+                        console.error('Error updating time:', e);
+                    }
+                }
+                
+                // Load audio file with error handling
+                // The filename contains colons which need to be URL encoded
+                const audioPath = 'Assets/2025-11-01-azure-Andrew:DragonHDLatest-Emma:DragonHDLatest.mp3';
+                const encodedPath = encodeURI(audioPath);
+                
+                // Set initial loading state
+                if (timeDisplay) {
+                    timeDisplay.textContent = 'Loading...';
+                }
+                
+                // Try loading with encoded path first, fallback to original
+                wavesurfer.load(encodedPath).then(() => {
+                    console.log('Audio loaded successfully');
+                    if (timeDisplay) {
+                        updateTime();
+                    }
+                }).catch(error => {
+                    console.error('Wavesurfer load error (encoded):', error);
+                    // Try with original path as fallback
+                    wavesurfer.load(audioPath).then(() => {
+                        console.log('Audio loaded with original path');
+                        if (timeDisplay) {
+                            updateTime();
+                        }
+                    }).catch(err => {
+                        console.error('Wavesurfer load error (original):', err);
+                        // Show error message after delay if still not loaded
+                        setTimeout(() => {
+                            if (!wavesurfer.getDuration() && timeDisplay) {
+                                timeDisplay.textContent = 'Error: Audio file not found';
+                                console.error('Audio path attempted:', encodedPath, audioPath);
+                                console.error('Current URL:', window.location.href);
+                            }
+                        }, 3000);
+                    });
+                });
+                
+                // Play/Pause button
+                playBtn.addEventListener('click', () => {
+                    wavesurfer.playPause();
+                });
+                
+                // Update play/pause icon
+                wavesurfer.on('play', () => {
+                    if (playIcon) playIcon.style.display = 'none';
+                    if (pauseIcon) pauseIcon.style.display = 'block';
+                });
+                
+                wavesurfer.on('pause', () => {
+                    if (playIcon) playIcon.style.display = 'block';
+                    if (pauseIcon) pauseIcon.style.display = 'none';
+                });
+                
+                // Update time as audio plays
+                wavesurfer.on('timeupdate', updateTime);
+                
+                // Update time when ready
+                wavesurfer.on('ready', () => {
+                    updateTime();
+                });
+                
+                // Handle errors - don't show error immediately, let it try to load
+                wavesurfer.on('error', (error) => {
+                    console.error('Wavesurfer error:', error);
+                    // Only show error after a delay if it's still not loaded
+                    setTimeout(() => {
+                        if (!wavesurfer.getDuration() && timeDisplay) {
+                            timeDisplay.textContent = 'Error: Audio file not accessible';
+                        }
+                    }, 3000);
+                });
+                
+                // Show loading state
+                wavesurfer.on('loading', (progress) => {
+                    if (timeDisplay && progress < 100) {
+                        timeDisplay.textContent = `Loading... ${Math.round(progress)}%`;
+                    }
+                });
+                
+                // Reset when audio ends
+                wavesurfer.on('finish', () => {
+                    if (playIcon) playIcon.style.display = 'block';
+                    if (pauseIcon) pauseIcon.style.display = 'none';
+                });
+            } catch (error) {
+                console.error('Error initializing Wavesurfer:', error);
+                // Fallback to HTML5 audio if Wavesurfer fails
+                initHTML5AudioFallback();
+            }
+        }
+        
+        // HTML5 Audio Fallback for file:// protocol
+        function initHTML5AudioFallback() {
+            const playBtn = document.getElementById('wavesurfer-play');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const timeDisplay = document.getElementById('wavesurfer-time');
+            const wavesurferContainer = document.getElementById('wavesurfer');
+            
+            if (!playBtn || !timeDisplay || !wavesurferContainer) {
+                console.error('Audio player elements not found');
+                return;
+            }
+            
+            // Create HTML5 audio element
+            audioFallback = new Audio();
+            const audioPath = 'Assets/2025-11-01-azure-Andrew:DragonHDLatest-Emma:DragonHDLatest.mp3';
+            
+            // Get absolute path for file:// protocol
+            let absolutePath = audioPath;
+            if (window.location.protocol === 'file:') {
+                const basePath = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+                absolutePath = basePath + audioPath;
+            }
+            
+            audioFallback.src = absolutePath;
+            audioFallback.preload = 'metadata';
+            
+            // Format time
+            function formatTime(seconds) {
+                if (!seconds || isNaN(seconds)) return '0:00';
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+            
+            // Update time display
+            function updateTime() {
+                try {
+                    const current = audioFallback.currentTime || 0;
+                    const duration = audioFallback.duration || 0;
+                    if (duration && !isNaN(duration)) {
+                        timeDisplay.textContent = `${formatTime(current)} / ${formatTime(duration)}`;
+                    } else {
+                        timeDisplay.textContent = `${formatTime(current)} / --:--`;
+                    }
+                } catch (e) {
+                    console.error('Error updating time:', e);
+                }
+            }
+            
+            // Create clickable progress bar with waveform-like visualization
+            function createProgressBar() {
+                wavesurferContainer.innerHTML = '';
+                wavesurferContainer.style.position = 'relative';
+                wavesurferContainer.style.width = '100%';
+                wavesurferContainer.style.height = '80px';
+                wavesurferContainer.style.cursor = 'pointer';
+                wavesurferContainer.style.marginBottom = '10px';
+                
+                // Create progress bar background
+                const progressBar = document.createElement('div');
+                progressBar.style.position = 'relative';
+                progressBar.style.width = '100%';
+                progressBar.style.height = '80px';
+                progressBar.style.backgroundColor = 'rgba(59, 130, 246, 0.1)';
+                progressBar.style.borderRadius = '4px';
+                progressBar.style.overflow = 'hidden';
+                progressBar.id = 'audio-progress-bar';
+                
+                // Create waveform-like bars
+                const barsContainer = document.createElement('div');
+                barsContainer.style.position = 'absolute';
+                barsContainer.style.top = '0';
+                barsContainer.style.left = '0';
+                barsContainer.style.width = '100%';
+                barsContainer.style.height = '100%';
+                barsContainer.style.display = 'flex';
+                barsContainer.style.alignItems = 'center';
+                barsContainer.style.justifyContent = 'space-around';
+                barsContainer.style.padding = '0 5px';
+                barsContainer.id = 'waveform-bars';
+                
+                for (let i = 0; i < 100; i++) {
+                    const bar = document.createElement('div');
+                    bar.style.width = '2px';
+                    bar.style.height = '20px';
+                    bar.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                    bar.style.borderRadius = '2px';
+                    bar.className = 'wave-bar';
+                    barsContainer.appendChild(bar);
+                }
+                
+                // Create progress fill
+                const progressFill = document.createElement('div');
+                progressFill.style.position = 'absolute';
+                progressFill.style.top = '0';
+                progressFill.style.left = '0';
+                progressFill.style.width = '0%';
+                progressFill.style.height = '100%';
+                progressFill.style.backgroundColor = 'rgba(59, 130, 246, 0.2)';
+                progressFill.id = 'audio-progress-fill';
+                
+                progressBar.appendChild(barsContainer);
+                progressBar.appendChild(progressFill);
+                wavesurferContainer.appendChild(progressBar);
+                
+                // Add drag-to-seek functionality
+                let isDragging = false;
+                
+                function seekToPosition(e) {
+                    if (audioFallback.duration) {
+                        const rect = progressBar.getBoundingClientRect();
+                        const clickX = e.clientX - rect.left;
+                        const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+                        audioFallback.currentTime = percentage * audioFallback.duration;
+                    }
+                }
+                
+                // Mouse events for desktop
+                progressBar.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    seekToPosition(e);
+                    progressBar.style.cursor = 'grabbing';
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (isDragging) {
+                        seekToPosition(e);
+                    }
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        progressBar.style.cursor = 'pointer';
+                    }
+                });
+                
+                // Touch events for mobile
+                progressBar.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    seekToPosition(touch);
+                });
+                
+                document.addEventListener('touchmove', (e) => {
+                    if (isDragging) {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        seekToPosition(touch);
+                    }
+                });
+                
+                document.addEventListener('touchend', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                    }
+                });
+                
+                // Click handler as fallback
+                progressBar.addEventListener('click', (e) => {
+                    if (!isDragging) {
+                        seekToPosition(e);
+                    }
+                });
+            }
+            
+            // Animate waveform bars
+            function animateWaveform() {
+                const bars = document.querySelectorAll('#waveform-bars .wave-bar');
+                if (!bars.length) return;
+                
+                bars.forEach((bar, index) => {
+                    if (audioFallback && !audioFallback.paused && audioFallback.duration) {
+                        const progress = audioFallback.currentTime / audioFallback.duration;
+                        const barPosition = index / bars.length;
+                        
+                        if (barPosition <= progress) {
+                            // Bars that have been played
+                            const height = 20 + Math.random() * 50;
+                            bar.style.height = height + 'px';
+                            bar.style.backgroundColor = '#3b82f6';
+                        } else {
+                            // Bars not yet played
+                            const height = 15 + Math.random() * 25;
+                            bar.style.height = height + 'px';
+                            bar.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                        }
+                    } else {
+                        // Paused or stopped
+                        const height = 15 + Math.random() * 25;
+                        bar.style.height = height + 'px';
+                        bar.style.backgroundColor = 'rgba(59, 130, 246, 0.3)';
+                    }
+                });
+            }
+            
+            // Update progress bar fill
+            function updateProgressBar() {
+                const progressFill = document.getElementById('audio-progress-fill');
+                if (progressFill && audioFallback.duration) {
+                    const progress = (audioFallback.currentTime / audioFallback.duration) * 100;
+                    progressFill.style.width = progress + '%';
+                }
+            }
+            
+            // Initialize progress bar
+            createProgressBar();
+            
+            // Set initial loading state
+            timeDisplay.textContent = 'Loading...';
+            
+            // When metadata is loaded
+            audioFallback.addEventListener('loadedmetadata', () => {
+                updateTime();
+            });
+            
+            // Update time as audio plays
+            audioFallback.addEventListener('timeupdate', () => {
+                updateTime();
+                updateProgressBar();
+                animateWaveform();
+            });
+            
+            // Handle errors
+            audioFallback.addEventListener('error', (e) => {
+                console.error('Audio load error:', e);
+                timeDisplay.textContent = 'Error: Audio file not found';
+            });
+            
+            // Play/Pause button
+            playBtn.addEventListener('click', () => {
+                if (audioFallback.paused) {
+                    audioFallback.play().catch(err => {
+                        console.error('Play error:', err);
+                        timeDisplay.textContent = 'Error: Cannot play audio';
+                    });
+                } else {
+                    audioFallback.pause();
+                }
+            });
+            
+            // Update play/pause icon
+            audioFallback.addEventListener('play', () => {
+                if (playIcon) playIcon.style.display = 'none';
+                if (pauseIcon) pauseIcon.style.display = 'block';
+            });
+            
+            audioFallback.addEventListener('pause', () => {
+                if (playIcon) playIcon.style.display = 'block';
+                if (pauseIcon) pauseIcon.style.display = 'none';
+                animateWaveform(); // Update bars
+            });
+            
+            audioFallback.addEventListener('ended', () => {
+                if (playIcon) playIcon.style.display = 'block';
+                if (pauseIcon) pauseIcon.style.display = 'none';
+                audioFallback.currentTime = 0;
+                updateProgressBar();
+                animateWaveform(); // Reset bars
+            });
+            
+            // Animate waveform periodically
+            let animationInterval;
+            audioFallback.addEventListener('play', () => {
+                animationInterval = setInterval(() => {
+                    animateWaveform();
+                    updateProgressBar();
+                }, 100);
+            });
+            audioFallback.addEventListener('pause', () => {
+                if (animationInterval) clearInterval(animationInterval);
+            });
+            audioFallback.addEventListener('ended', () => {
+                if (animationInterval) clearInterval(animationInterval);
+            });
+            
+            // Update progress bar when metadata loads
+            audioFallback.addEventListener('loadedmetadata', () => {
+                updateProgressBar();
+            });
+        }
+        
+        // Initialize when DOM and Wavesurfer are ready
+        function waitForWavesurfer() {
+            // If file:// protocol, initialize HTML5 audio fallback immediately
+            if (isFileProtocol) {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initHTML5AudioFallback);
+                } else {
+                    initHTML5AudioFallback();
+                }
+                return;
+            }
+            
+            // Otherwise, wait for Wavesurfer
+            if (typeof WaveSurfer !== 'undefined') {
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initWavesurfer);
+                } else {
+                    initWavesurfer();
+                }
+            } else {
+                setTimeout(waitForWavesurfer, 100);
+            }
+        }
+        
+        // Start waiting for Wavesurfer
+        waitForWavesurfer();
     </script>
 </body>
 </html>
